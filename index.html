@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Exchange</title>
+<style>
+    /* THEME: Johan Liebert / Monster 
+       Aesthetic: Cold, Intellectual, Sophisticated, Unsettling.
+       Colors: Deep Charcoal, Off-White, Muted Grey, Blood Crimson.
+    */
+    
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400&display=swap');
+
+    :root {
+        --bg-color: #0a0a0a;
+        --card-bg: #141414;
+        --text-color: #e0e0e0;
+        --muted-text: #888888;
+        --accent-color: #720e1e; /* Deep Blood Red */
+        --accent-hover: #901225;
+        --border-color: #333333;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    body {
+        font-family: 'Lato', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 40px 20px;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: var(--card-bg);
+        padding: 40px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+        position: relative;
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-top: 0;
+    }
+
+    h1 {
+        text-align: center;
+        color: var(--text-color);
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: var(--muted-text);
+        font-size: 1rem;
+        font-style: italic;
+        margin-bottom: 40px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
+    }
+
+    /* Goal Section */
+    .goal-section {
+        background: #0f0f0f;
+        padding: 25px;
+        border-left: 3px solid var(--accent-color);
+        margin-bottom: 40px;
+    }
+
+    .goal-inputs {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        justify-content: center;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .input-group label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--muted-text);
+        margin-bottom: 8px;
+    }
+
+    /* Inputs */
+    input[type="text"], input[type="number"] {
+        background: #1a1a1a;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        padding: 12px;
+        font-family: 'Lato', sans-serif;
+        font-size: 1rem;
+        transition: border 0.3s ease;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus {
+        outline: none;
+        border-color: var(--accent-color);
+    }
+
+    /* Progress Bar - Sharp and Thin */
+    .progress-container {
+        height: 6px;
+        background-color: #222;
+        width: 100%;
+        margin-top: 20px;
+        position: relative;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: var(--accent-color);
+        transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 0 0 10px rgba(114, 14, 30, 0.4);
+    }
+
+    .status-message {
+        text-align: right;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .missing { color: var(--accent-color); }
+    .surplus { color: #556b2f; } /* Muted moss green */
+
+    /* Sticky Total */
+    .total-header {
+        position: sticky;
+        top: 0;
+        background: rgba(20, 20, 20, 0.95);
+        backdrop-filter: blur(5px);
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 30px;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .total-display {
+        font-size: 1.5rem;
+        font-family: 'Playfair Display', serif;
+    }
+
+    #currentTotal { color: var(--text-color); }
+
+    /* Inventory Grid */
+    .category {
+        margin-bottom: 30px;
+    }
+
+    .category h3 {
+        font-size: 1.2rem;
+        color: var(--muted-text);
+        border-bottom: 1px solid #222;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+
+    .item-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #0f0f0f;
+        padding: 10px 15px;
+        border: 1px solid #222;
+        transition: background 0.2s;
+    }
+
+    .item-row:hover {
+        background: #1a1a1a;
+        border-color: #444;
+    }
+
+    .item-name {
+        font-size: 0.9rem;
+        color: #ccc;
+    }
+
+    input.item-input {
+        width: 50px;
+        text-align: center;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #444;
+        color: var(--accent-color);
+        font-weight: bold;
+    }
+    
+    input.item-input:focus {
+        border-bottom-color: var(--accent-color);
+    }
+
+    /* Buttons */
+    .reset-btn {
+        background-color: transparent;
+        color: var(--muted-text);
+        border: 1px solid var(--border-color);
+        padding: 15px 30px;
+        cursor: pointer;
+        width: 100%;
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-top: 40px;
+        transition: all 0.3s ease;
+    }
+
+    .reset-btn:hover {
+        background-color: var(--accent-color);
+        color: white;
+        border-color: var(--accent-color);
+    }
+
+    /* Chrome/Edge number input spinner hide */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>The Exchange</h1>
+    <div class="subtitle">"The only thing all humans are equal in is death."</div>
+    
+    <div class="goal-section">
+        <div class="goal-inputs">
+            <div class="input-group">
+                <label>Target Subject</label>
+                <input type="text" id="charName" placeholder="Name...">
+            </div>
+            <div class="input-group">
+                <label>Required Value</label>
+                <input type="number" id="goalAmount" placeholder="0" oninput="calculateTotal()">
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="status-message" id="statusMessage">Awaiting input...</div>
+    </div>
+
+    <div class="total-header">
+        <span class="total-display">Current Worth</span>
+        <span class="total-display" id="currentTotal">0</span>
+    </div>
+
+    <form id="calcForm">
+        <div id="itemsContainer"></div>
+        <button type="button" class="reset-btn" onclick="resetCalculator()">Tabula Rasa (Reset)</button>
+    </form>
+</div>
+
+<script>
+    const data = [
+        { worth: 750, items: ["Hogyoku", "Demon Extract", "Cup of Reincarnation", "Arrancar Helm", "Dark God Cube"] },
+        { worth: 500, items: ["Hana Earrings", "Hand of Berserker", "Eye of Avarice", "Super Necklace", "Quincy Cross", "Divine Stone", "Manatite Crystals", "Straw Hat"] },
+        { worth: 60, items: ["Demon Mark", "Dragon Rune", "Cyborg Core"] },
+        { worth: 40, items: ["Risky Rice", "Kitsune Mask", "Swordsman Hat", "Potora Earrings", "Brand of Sacrifice", "Prison Cube", "Mirage Sphere", "Black Slime", "Philosopher Stone", "Goddess Hairpin", "Mask Fragment"] },
+        { worth: 15, items: ["Stealth Rune", "General Hat", "Hero Cape"] },
+        { worth: 10, items: ["Slime Hood", "Beach Hat", "Knight Shield", "Capsules", "Alchemist Armor", "Pirate Hat", "Butterfly Pin", "Cursed Finger", "Active Droplet", "Eye Patch", "Joker's Cards"] },
+        { worth: 8, items: ["Dominator Rune", "Hero Guidebook", "Handcuffs"] },
+        { worth: 5, items: ["Hunter Cards", "Pocket Watch", "Flying Cabbage", "Shinigami Badge", "Edgy Phrase", "Marine Hat", "Briefcases", "RPG Potions", "Senzu Beans", "Bamboo Muzzle", "Inactive Droplet", "Cursed Speech"] }
+    ];
+
+    const container = document.getElementById('itemsContainer');
+
+    data.forEach(group => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category';
+        
+        const title = document.createElement('h3');
+        title.innerText = `Tier: ${group.worth}`;
+        categoryDiv.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'item-grid';
+
+        group.items.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'item-row';
+
+            const label = document.createElement('span');
+            label.className = 'item-name';
+            label.innerText = item;
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'item-input';
+            input.min = '0';
+            input.placeholder = '-';
+            input.dataset.worth = group.worth;
+            input.oninput = calculateTotal;
+
+            row.appendChild(label);
+            row.appendChild(input);
+            grid.appendChild(row);
+        });
+
+        categoryDiv.appendChild(grid);
+        container.appendChild(categoryDiv);
+    });
+
+    function calculateTotal() {
+        let currentTotal = 0;
+        const inputs = document.querySelectorAll('.item-input');
+        inputs.forEach(input => {
+            const val = parseInt(input.value) || 0;
+            const worth = parseInt(input.dataset.worth);
+            currentTotal += (val * worth);
+        });
+
+        document.getElementById('currentTotal').innerText = currentTotal.toLocaleString();
+
+        const goalInput = document.getElementById('goalAmount');
+        const goalAmount = parseInt(goalInput.value) || 0;
+        const statusMsg = document.getElementById('statusMessage');
+        const progressBar = document.getElementById('progressBar');
+
+        if (goalAmount > 0) {
+            const difference = goalAmount - currentTotal;
+            const percentage = Math.min((currentTotal / goalAmount) * 100, 100);
+            
+            progressBar.style.width = percentage + "%";
+
+            if (difference > 0) {
+                statusMsg.innerHTML = `Missing: <span class="missing">${difference.toLocaleString()}</span>`;
+                progressBar.style.backgroundColor = "#720e1e"; 
+            } else {
+                const surplus = Math.abs(difference);
+                statusMsg.innerHTML = `Requirement Met. Surplus: <span class="surplus">${surplus.toLocaleString()}</span>`;
+                progressBar.style.backgroundColor = "#556b2f"; 
+            }
+        } else {
+            statusMsg.innerText = "Awaiting input...";
+            progressBar.style.width = "0%";
+        }
+    }
+
+    function resetCalculator() {
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => input.value = '');
+        calculateTotal();
+    }
+</script>
+
+</body>
+</html>
