@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Exchange</title>
+<title>The Exchange & Archives</title>
 <style>
     /* THEME: Johan Liebert / Monster */
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
     :root {
         --bg-color: #0a0a0a;
@@ -13,6 +13,7 @@
         --text-color: #e0e0e0;
         --muted-text: #888888;
         --accent-color: #720e1e; /* Deep Blood Red */
+        --accent-glow: rgba(114, 14, 30, 0.3);
         --border-color: #333333;
         --shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     }
@@ -56,6 +57,72 @@
         padding-bottom: 20px;
     }
 
+    /* NAVIGATION TABS */
+    .nav-bar {
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid #333;
+        margin-bottom: 30px;
+    }
+
+    .nav-btn {
+        background: transparent;
+        border: none;
+        color: #666;
+        padding: 15px 30px;
+        cursor: pointer;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        transition: 0.3s;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-btn:hover { color: #aaa; }
+    
+    .nav-btn.active {
+        color: #e0e0e0;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
+    .tab-content.active-tab { display: block; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Sticky Header */
+    .total-header {
+        position: sticky;
+        top: 0;
+        background: rgba(20, 20, 20, 0.98);
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 30px;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .total-display {
+        font-size: 1.4rem;
+        font-family: 'Playfair Display', serif;
+        font-weight: bold;
+    }
+
+    .currency-label {
+        font-size: 0.8rem;
+        color: var(--muted-text);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        text-align: right;
+    }
+
     /* Goal Section */
     .goal-section {
         background: #0f0f0f;
@@ -70,21 +137,9 @@
         margin-bottom: 20px;
     }
 
-    .input-group {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
+    .input-group { display: flex; flex-direction: column; flex: 1; }
+    .input-group label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-text); margin-bottom: 8px; }
 
-    .input-group label {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--muted-text);
-        margin-bottom: 8px;
-    }
-
-    /* Inputs & Selects */
     input, select {
         background: #1a1a1a;
         border: 1px solid var(--border-color);
@@ -93,21 +148,10 @@
         font-family: 'Lato', sans-serif;
         font-size: 1rem;
         outline: none;
+        transition: border-color 0.3s;
     }
 
-    select {
-        cursor: pointer;
-        appearance: none; /* Removes default browser arrow */
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-        background-repeat: no-repeat;
-        background-position: right 12px top 50%;
-        background-size: 10px;
-        padding-right: 30px;
-    }
-
-    input:focus, select:focus {
-        border-color: var(--accent-color);
-    }
+    input:focus, select:focus { border-color: var(--accent-color); }
 
     /* Progress Bar */
     .progress-container {
@@ -117,96 +161,50 @@
         margin-top: 20px;
         position: relative;
     }
-
     .progress-bar {
         height: 100%;
         width: 0%;
         background-color: var(--accent-color);
         transition: width 0.5s ease;
-        box-shadow: 0 0 10px rgba(114, 14, 30, 0.4);
+        box-shadow: 0 0 10px var(--accent-glow);
     }
-
-    .status-message {
-        text-align: right;
-        font-size: 0.9rem;
-        margin-top: 10px;
-        font-family: 'Playfair Display', serif;
-    }
-
+    .status-message { text-align: right; font-size: 0.9rem; margin-top: 10px; font-family: 'Playfair Display', serif; }
     .missing { color: var(--accent-color); }
     .surplus { color: #556b2f; }
 
-    /* Sticky Header */
-    .total-header {
-        position: sticky;
-        top: 0;
-        background: rgba(20, 20, 20, 0.98);
-        padding: 20px 0;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 30px;
-        z-index: 100;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .total-display {
-        font-size: 1.5rem;
-        font-family: 'Playfair Display', serif;
-    }
-
     /* Item Grid */
-    .category h3 {
-        font-size: 1.2rem;
-        color: var(--muted-text);
-        border-bottom: 1px solid #222;
-        padding-bottom: 10px;
-    }
-
-    .item-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-
-    .item-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #0f0f0f;
-        padding: 10px 15px;
-        border: 1px solid #222;
-    }
-
-    .item-name { font-size: 0.9rem; color: #ccc; }
-
-    input.item-input {
-        width: 50px;
-        text-align: center;
-        border: none;
-        border-bottom: 1px solid #444;
-        background: transparent;
-        color: var(--accent-color);
-        font-weight: bold;
-    }
+    .category h3 { font-size: 1.2rem; color: var(--muted-text); border-bottom: 1px solid #222; padding-bottom: 10px; margin-top: 30px;}
+    .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-bottom: 10px; }
     
+    .item-row {
+        display: flex; justify-content: space-between; align-items: center;
+        background: #0f0f0f; padding: 12px 15px; border: 1px solid #222;
+        transition: background 0.2s;
+    }
+    .item-row:hover { background: #161616; }
+
+    .item-info { display: flex; flex-direction: column; }
+    .item-name { font-size: 1rem; color: #ccc; font-weight: bold; }
+    .item-meta { font-size: 0.75rem; color: #666; margin-top: 2px; }
+    .item-yield { font-size: 0.8rem; color: var(--accent-color); font-weight: bold; margin-top: 4px; opacity: 0; transition: opacity 0.3s; }
+    
+    input.item-input {
+        width: 60px; text-align: center; border: none; border-bottom: 1px solid #444;
+        background: transparent; color: var(--accent-color); font-weight: bold; font-size: 1.1rem;
+    }
+    input.item-input:focus { border-bottom-color: var(--accent-color); }
+    input.item-input::placeholder { color: #333; }
+
     .reset-btn {
-        background: transparent;
-        color: var(--muted-text);
-        border: 1px solid var(--border-color);
-        padding: 15px;
-        width: 100%;
-        font-family: 'Playfair Display', serif;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: 0.3s;
+        background: transparent; color: var(--muted-text); border: 1px solid var(--border-color);
+        padding: 15px; width: 100%; font-family: 'Playfair Display', serif; text-transform: uppercase;
+        cursor: pointer; transition: 0.3s; margin-top: 30px; letter-spacing: 2px;
     }
-    .reset-btn:hover {
-        background: var(--accent-color);
-        color: white;
-        border-color: var(--accent-color);
-    }
+    .reset-btn:hover { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+
+    /* Chrome/Edge number input spinner hide */
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
 
 </style>
 </head>
@@ -215,54 +213,68 @@
 <div class="container">
     <h1>The Exchange</h1>
     <div class="subtitle">"The only thing all humans are equal in is death."</div>
-    
-    <div class="goal-section">
-        <div class="goal-inputs">
-            
-            <div class="input-group">
-                <label>Target Subject (Preset)</label>
-                <select id="charSelect" onchange="updateGoalFromSelect()">
-                    <option value="0">-- Select Subject --</option>
+
+    <div class="nav-bar">
+        <button class="nav-btn active" onclick="openTab('exchange')">Exchange Protocol</button>
+        <button class="nav-btn" onclick="openTab('dungeon')">Dungeon Archives</button>
+    </div>
+
+    <div id="exchange" class="tab-content active-tab">
+        <div class="goal-section">
+            <div class="goal-inputs">
+                <div class="input-group">
+                    <label>Target Subject (Preset)</label>
+                    <select id="charSelect" onchange="updateGoalFromSelect()">
+                        <option value="0">-- Select Subject --</option>
                     </select>
+                </div>
+                <div class="input-group">
+                    <label>Required Value (Rubies)</label>
+                    <input type="number" id="goalAmount" placeholder="0" oninput="calculateExchange()">
+                </div>
             </div>
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="status-message" id="statusMessage">Awaiting input...</div>
+        </div>
 
-            <div class="input-group">
-                <label>Required Value</label>
-                <input type="number" id="goalAmount" placeholder="0" oninput="calculateTotal()">
+        <div class="total-header">
+            <div>
+                <span class="currency-label">Inventory Value</span>
+                <span class="total-display" id="exchangeTotal">0</span>
             </div>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+        <div id="exchangeItemsContainer"></div>
+        <button type="button" class="reset-btn" onclick="resetExchange()">Tabula Rasa (Reset)</button>
+    </div>
+
+    <div id="dungeon" class="tab-content">
+        <div class="total-header" style="border-bottom-color: #556b2f;">
+            <div>
+                <span class="currency-label">Total Cost (Rubies)</span>
+                <span class="total-display" id="dungeonCostTotal">0</span>
+            </div>
         </div>
-        <div class="status-message" id="statusMessage">Awaiting input...</div>
-    </div>
 
-    <div class="total-header">
-        <span class="total-display">Current Worth</span>
-        <span class="total-display" id="currentTotal">0</span>
+        <div id="dungeonItemsContainer"></div>
+        <button type="button" class="reset-btn" onclick="resetDungeon()">Clear Selection</button>
     </div>
-
-    <form id="calcForm">
-        <div id="itemsContainer"></div>
-        <button type="button" class="reset-btn" onclick="resetCalculator()">Tabula Rasa (Reset)</button>
-    </form>
 </div>
 
 <script>
-    // ---------------------------------------------------------
-    // --- EDIT YOUR CHARACTER LIST HERE ---
-    // Format: { name: "Character Name", cost: 12345 },
-    // ---------------------------------------------------------
-    const characterDatabase = [
-        { name: "Example: Gojo Evolution", cost: 3500 },
-        { name: "Example: Madara Evolution", cost: 5000 },
-        { name: "Example: Cheap Unit", cost: 500 },
-        // Copy the line above and paste it here to add more characters
-    ];
-    // ---------------------------------------------------------
+    // ------------------------------------------------------------------
+    // 1. DATA CONFIGURATION
+    // ------------------------------------------------------------------
 
-    const data = [
+    // User Editable: Character Evolution Costs
+    const characterDatabase = [
+        { name: "Gojo Evo", cost: 3500 },
+        { name: "Madara Evo", cost: 5000 },
+        // Add more here: { name: "Name", cost: 1000 },
+    ];
+
+    // Exchange Shop Data
+    const exchangeData = [
         { worth: 750, items: ["Hogyoku", "Demon Extract", "Cup of Reincarnation", "Arrancar Helm", "Dark God Cube"] },
         { worth: 500, items: ["Hana Earrings", "Hand of Berserker", "Eye of Avarice", "Super Necklace", "Quincy Cross", "Divine Stone", "Manatite Crystals", "Straw Hat"] },
         { worth: 60, items: ["Demon Mark", "Dragon Rune", "Cyborg Core"] },
@@ -273,7 +285,56 @@
         { worth: 5, items: ["Hunter Cards", "Pocket Watch", "Flying Cabbage", "Shinigami Badge", "Edgy Phrase", "Marine Hat", "Briefcases", "RPG Potions", "Senzu Beans", "Bamboo Muzzle", "Inactive Droplet", "Cursed Speech"] }
     ];
 
-    // 1. Populate Character Dropdown
+    // Dungeon Shop Data (Parsed from your input)
+    const dungeonData = [
+        { name: "TP Scroll - Floor 11", price: 200, qty: 1 },
+        { name: "Impure Soul", price: 350, qty: 1 },
+        { name: "Trait Rerolls", price: 500, qty: 5 },
+        { name: "Perk Rerolls", price: 500, qty: 5 },
+        { name: "Mundane Grimoire", price: 500, qty: 10 },
+        { name: "Senzu Beans", price: 300, qty: 20 },
+        { name: "Marine Hat", price: 300, qty: 20 },
+        { name: "RPG Potions", price: 300, qty: 20 },
+        { name: "Cursed Speech", price: 300, qty: 20 },
+        { name: "Hunter Cards", price: 300, qty: 20 },
+        { name: "Edgy Phrase", price: 300, qty: 20 },
+        { name: "Pocket Watch", price: 300, qty: 20 },
+        { name: "Shinigami Badge", price: 300, qty: 20 },
+        { name: "Flying Cabbage", price: 300, qty: 20 },
+        { name: "Inactive Droplet", price: 300, qty: 20 },
+        { name: "Capsules", price: 300, qty: 10 },
+        { name: "Pirate Hat", price: 300, qty: 10 },
+        { name: "Cursed Finger", price: 300, qty: 10 },
+        { name: "Jokers Cards", price: 300, qty: 10 },
+        { name: "Alchemist Armor", price: 300, qty: 10 },
+        { name: "Eye Patch", price: 300, qty: 10 },
+        { name: "Beach Hat", price: 300, qty: 10 },
+        { name: "Knight Shield", price: 300, qty: 10 },
+        { name: "Slime Hood", price: 300, qty: 10 },
+        { name: "Active Droplet", price: 300, qty: 10 },
+        { name: "Potara Earrings", price: 600, qty: 5 },
+        { name: "Black Slime", price: 600, qty: 5 },
+        { name: "Prison Cube", price: 600, qty: 5 },
+        { name: "Risky Dice", price: 600, qty: 5 },
+        { name: "Swordsman Hat", price: 600, qty: 5 },
+        { name: "Philosopher Stone", price: 600, qty: 5 },
+        { name: "Goddess Hairpin", price: 600, qty: 5 },
+        { name: "Mask Fragment", price: 600, qty: 5 },
+        { name: "Mirage Sphere", price: 600, qty: 5 },
+        { name: "Brand of Sacrifice", price: 600, qty: 5 },
+        { name: "Super Necklace", price: 1500, qty: 1 },
+        { name: "Straw Hat", price: 1500, qty: 1 },
+        { name: "Eye Of Avarice", price: 1500, qty: 1 },
+        { name: "Divine Stone", price: 1500, qty: 1 },
+        { name: "Quincy Cross", price: 1500, qty: 1 },
+        { name: "Hand of Berserker", price: 1500, qty: 1 }
+    ];
+
+    // ------------------------------------------------------------------
+    // 2. INITIALIZATION (Build UI)
+    // ------------------------------------------------------------------
+
+    // Setup Exchange Select
     const selectBox = document.getElementById('charSelect');
     characterDatabase.forEach(char => {
         const option = document.createElement('option');
@@ -282,93 +343,148 @@
         selectBox.appendChild(option);
     });
 
-    // 2. Build Inventory Grid
-    const container = document.getElementById('itemsContainer');
-    data.forEach(group => {
+    // Setup Exchange Grid
+    const exContainer = document.getElementById('exchangeItemsContainer');
+    exchangeData.forEach(group => {
         const categoryDiv = document.createElement('div');
         categoryDiv.className = 'category';
-        
-        const title = document.createElement('h3');
-        title.innerText = `Tier: ${group.worth}`;
-        categoryDiv.appendChild(title);
-
+        categoryDiv.innerHTML = `<h3>Tier: ${group.worth} Rubies</h3>`;
         const grid = document.createElement('div');
         grid.className = 'item-grid';
 
         group.items.forEach(item => {
             const row = document.createElement('div');
             row.className = 'item-row';
-            const label = document.createElement('span');
-            label.className = 'item-name';
-            label.innerText = item;
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.className = 'item-input';
-            input.min = '0';
-            input.placeholder = '-';
-            input.dataset.worth = group.worth;
-            input.oninput = calculateTotal;
-            row.appendChild(label);
-            row.appendChild(input);
+            row.innerHTML = `
+                <div class="item-info">
+                    <span class="item-name">${item}</span>
+                </div>
+                <input type="number" class="exchange-input item-input" min="0" placeholder="0" 
+                       data-worth="${group.worth}" oninput="calculateExchange()">
+            `;
             grid.appendChild(row);
         });
-
         categoryDiv.appendChild(grid);
-        container.appendChild(categoryDiv);
+        exContainer.appendChild(categoryDiv);
     });
 
-    // 3. Handle Select Change
+    // Setup Dungeon Grid
+    const dunContainer = document.getElementById('dungeonItemsContainer');
+    const dunGrid = document.createElement('div');
+    dunGrid.className = 'item-grid';
+    
+    dungeonData.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        // Unique ID for the yield span
+        const yieldId = `yield-${index}`;
+        
+        row.innerHTML = `
+            <div class="item-info">
+                <span class="item-name">${item.name}</span>
+                <span class="item-meta">Cost: ${item.price} | Batch: ${item.qty}</span>
+                <span id="${yieldId}" class="item-yield">Total Items: 0</span>
+            </div>
+            <input type="number" class="dungeon-input item-input" min="0" placeholder="0" 
+                   data-price="${item.price}" data-qty="${item.qty}" data-yield-id="${yieldId}"
+                   oninput="calculateDungeon()">
+        `;
+        dunGrid.appendChild(row);
+    });
+    dunContainer.appendChild(dunGrid);
+
+
+    // ------------------------------------------------------------------
+    // 3. LOGIC FUNCTIONS
+    // ------------------------------------------------------------------
+
+    // --- Exchange Tab Logic ---
     function updateGoalFromSelect() {
-        const selectedCost = document.getElementById('charSelect').value;
-        if(selectedCost !== "0") {
-            document.getElementById('goalAmount').value = selectedCost;
-            calculateTotal(); // Recalculate immediately
+        const val = document.getElementById('charSelect').value;
+        if(val !== "0") {
+            document.getElementById('goalAmount').value = val;
+            calculateExchange();
         }
     }
 
-    // 4. Main Calculation Logic
-    function calculateTotal() {
-        let currentTotal = 0;
-        const inputs = document.querySelectorAll('.item-input');
-        inputs.forEach(input => {
-            const val = parseInt(input.value) || 0;
-            const worth = parseInt(input.dataset.worth);
-            currentTotal += (val * worth);
+    function calculateExchange() {
+        let total = 0;
+        document.querySelectorAll('.exchange-input').forEach(input => {
+            total += (parseInt(input.value) || 0) * parseInt(input.dataset.worth);
         });
+        document.getElementById('exchangeTotal').innerText = total.toLocaleString();
 
-        document.getElementById('currentTotal').innerText = currentTotal.toLocaleString();
+        const goal = parseInt(document.getElementById('goalAmount').value) || 0;
+        const msg = document.getElementById('statusMessage');
+        const bar = document.getElementById('progressBar');
 
-        const goalInput = document.getElementById('goalAmount');
-        const goalAmount = parseInt(goalInput.value) || 0;
-        const statusMsg = document.getElementById('statusMessage');
-        const progressBar = document.getElementById('progressBar');
-
-        if (goalAmount > 0) {
-            const difference = goalAmount - currentTotal;
-            const percentage = Math.min((currentTotal / goalAmount) * 100, 100);
+        if (goal > 0) {
+            const diff = goal - total;
+            const pct = Math.min((total / goal) * 100, 100);
+            bar.style.width = pct + "%";
             
-            progressBar.style.width = percentage + "%";
-
-            if (difference > 0) {
-                statusMsg.innerHTML = `Deficit: <span class="missing">${difference.toLocaleString()}</span>`;
-                progressBar.style.backgroundColor = "#720e1e"; 
+            if (diff > 0) {
+                msg.innerHTML = `Deficit: <span class="missing">${diff.toLocaleString()}</span>`;
+                bar.style.backgroundColor = "#720e1e"; // Red
             } else {
-                const surplus = Math.abs(difference);
-                statusMsg.innerHTML = `Requirement Met. Surplus: <span class="surplus">${surplus.toLocaleString()}</span>`;
-                progressBar.style.backgroundColor = "#556b2f"; 
+                msg.innerHTML = `Requirement Met. Surplus: <span class="surplus">${Math.abs(diff).toLocaleString()}</span>`;
+                bar.style.backgroundColor = "#556b2f"; // Green
             }
         } else {
-            statusMsg.innerText = "Awaiting input...";
-            progressBar.style.width = "0%";
+            msg.innerText = "Awaiting input...";
+            bar.style.width = "0%";
         }
     }
 
-    function resetCalculator() {
-        const inputs = document.querySelectorAll('input');
-        inputs.forEach(input => input.value = '');
+    function resetExchange() {
+        document.querySelectorAll('.exchange-input').forEach(i => i.value = '');
         document.getElementById('charSelect').selectedIndex = 0;
-        calculateTotal();
+        calculateExchange();
     }
+
+    // --- Dungeon Tab Logic ---
+    function calculateDungeon() {
+        let totalCost = 0;
+        
+        document.querySelectorAll('.dungeon-input').forEach(input => {
+            const purchases = parseInt(input.value) || 0;
+            const price = parseInt(input.dataset.price);
+            const batchQty = parseInt(input.dataset.qty);
+            const yieldSpan = document.getElementById(input.dataset.yieldId);
+
+            // 1. Calculate Cost
+            totalCost += (purchases * price);
+
+            // 2. Update individual item yield display
+            if (purchases > 0) {
+                const totalItems = purchases * batchQty;
+                yieldSpan.innerText = `Total Items: ${totalItems.toLocaleString()}`;
+                yieldSpan.style.opacity = "1";
+            } else {
+                yieldSpan.style.opacity = "0";
+            }
+        });
+
+        document.getElementById('dungeonCostTotal').innerText = totalCost.toLocaleString();
+    }
+
+    function resetDungeon() {
+        document.querySelectorAll('.dungeon-input').forEach(i => i.value = '');
+        calculateDungeon();
+    }
+
+    // --- Tab Switching ---
+    function openTab(tabName) {
+        // Hide all contents
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+        // Deactivate all buttons
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        
+        // Show target
+        document.getElementById(tabName).classList.add('active-tab');
+        event.currentTarget.classList.add('active');
+    }
+
 </script>
 
 </body>
