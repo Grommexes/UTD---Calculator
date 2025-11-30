@@ -81,6 +81,7 @@
         margin-bottom: 30px;
         border-bottom: 1px solid rgba(255,255,255,0.1);
         padding-bottom: 10px;
+        flex-wrap: wrap;
     }
 
     .nav-btn {
@@ -154,6 +155,17 @@
         display: block;
         text-align: right;
     }
+    
+    .exp-stats {
+        display: flex;
+        gap: 20px;
+        text-align: right;
+    }
+    
+    .stat-box {
+        display: flex;
+        flex-direction: column;
+    }
 
     /* Goal Section */
     .goal-section {
@@ -171,7 +183,7 @@
         margin-bottom: 20px;
     }
 
-    .input-group { display: flex; flex-direction: column; flex: 1; min-width: 250px; }
+    .input-group { display: flex; flex-direction: column; flex: 1; min-width: 200px; }
     .input-group label { 
         font-family: 'Rajdhani', sans-serif; 
         font-weight: 700;
@@ -333,8 +345,10 @@
     <div class="nav-bar">
         <button class="nav-btn active" onclick="openTab('exchange')">Exchange Protocol</button>
         <button class="nav-btn" onclick="openTab('dungeon')">Dungeon Archives</button>
+        <button class="nav-btn" onclick="openTab('playerExp')">EXP Data</button>
     </div>
 
+    <!-- TAB 1: EXCHANGE -->
     <div id="exchange" class="tab-content active-tab">
         <div class="goal-section">
             <div class="goal-inputs">
@@ -364,6 +378,7 @@
         <button type="button" class="reset-btn" onclick="resetExchange()">Clear Data (Reset)</button>
     </div>
 
+    <!-- TAB 2: DUNGEON -->
     <div id="dungeon" class="tab-content">
         <div class="total-header">
             <div>
@@ -374,6 +389,56 @@
 
         <div id="dungeonItemsContainer"></div>
         <button type="button" class="reset-btn" onclick="resetDungeon()">Clear Selection</button>
+    </div>
+
+    <!-- TAB 3: PLAYER EXP -->
+    <div id="playerExp" class="tab-content">
+        <div class="total-header">
+            <div class="exp-stats">
+                 <div class="stat-box">
+                    <span class="currency-label">Total Runs</span>
+                    <span class="total-display" id="expTotalRuns">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="currency-label">Time Needed</span>
+                    <span class="total-display" id="expTotalTime" style="font-size: 1.5rem; margin-top: 5px;">0h 0m</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="goal-section" style="background: rgba(139, 92, 246, 0.05); border-color: var(--accent-primary);">
+            <div class="goal-inputs">
+                <div class="input-group">
+                    <label>Current Level</label>
+                    <input type="number" id="currentLevel" value="108" oninput="calculatePlayerExp()">
+                </div>
+                <div class="input-group">
+                    <label>EXP For Next Level</label>
+                    <input type="number" id="currentLevelExp" value="229450" oninput="calculatePlayerExp()">
+                </div>
+                <div class="input-group">
+                    <label>Target Level</label>
+                    <input type="number" id="targetLevel" placeholder="e.g. 120" oninput="calculatePlayerExp()">
+                </div>
+            </div>
+            <div class="goal-inputs">
+                <div class="input-group">
+                    <label>EXP Per Run</label>
+                    <input type="number" id="expPerRun" placeholder="e.g. 5000" oninput="calculatePlayerExp()">
+                </div>
+                <div class="input-group">
+                    <label>Time Per Run (Minutes)</label>
+                    <input type="number" id="timePerRun" placeholder="e.g. 5" oninput="calculatePlayerExp()">
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <span class="currency-label" style="text-align: left; color: #fff;">Total EXP Required:</span>
+                <span id="totalExpRequired" style="font-family: 'Rajdhani'; font-size: 1.2rem; color: var(--accent-secondary);">0</span>
+            </div>
+        </div>
+        
+        <button type="button" class="reset-btn" onclick="resetPlayerExp()">Reset Calculator</button>
     </div>
 </div>
 
@@ -386,7 +451,6 @@
     const characterDatabase = [
         { name: "Gojo Evo", cost: 3500 },
         { name: "Madara Evo", cost: 5000 },
-        // Add more here: { name: "Name", cost: 1000 },
     ];
 
     // Exchange Shop Data
@@ -401,7 +465,7 @@
         { worth: 5, items: ["Hunter Cards", "Pocket Watch", "Flying Cabbage", "Shinigami Badge", "Edgy Phrase", "Marine Hat", "Briefcases", "RPG Potions", "Senzu Beans", "Bamboo Muzzle", "Inactive Droplet", "Cursed Speech"] }
     ];
 
-    // Dungeon Shop Data (Parsed from your input)
+    // Dungeon Shop Data
     const dungeonData = [
         { name: "TP Scroll - Floor 11", price: 200, qty: 1 },
         { name: "Impure Soul", price: 350, qty: 1 },
@@ -492,7 +556,6 @@
     dungeonData.forEach((item, index) => {
         const row = document.createElement('div');
         row.className = 'item-row';
-        // Unique ID for the yield span
         const yieldId = `yield-${index}`;
         
         row.innerHTML = `
@@ -562,17 +625,14 @@
     // --- Dungeon Tab Logic ---
     function calculateDungeon() {
         let totalCost = 0;
-        
         document.querySelectorAll('.dungeon-input').forEach(input => {
             const purchases = parseInt(input.value) || 0;
             const price = parseInt(input.dataset.price);
             const batchQty = parseInt(input.dataset.qty);
             const yieldSpan = document.getElementById(input.dataset.yieldId);
 
-            // 1. Calculate Cost
             totalCost += (purchases * price);
 
-            // 2. Update individual item yield display
             if (purchases > 0) {
                 const totalItems = purchases * batchQty;
                 yieldSpan.innerText = `Total Items: ${totalItems.toLocaleString()}`;
@@ -581,7 +641,6 @@
                 yieldSpan.style.opacity = "0";
             }
         });
-
         document.getElementById('dungeonCostTotal').innerText = totalCost.toLocaleString();
     }
 
@@ -590,14 +649,60 @@
         calculateDungeon();
     }
 
+    // --- Player EXP Tab Logic ---
+    function calculatePlayerExp() {
+        const startLevel = parseInt(document.getElementById('currentLevel').value) || 0;
+        const startLevelExp = parseInt(document.getElementById('currentLevelExp').value) || 0;
+        const targetLevel = parseInt(document.getElementById('targetLevel').value) || 0;
+        const expPerRun = parseInt(document.getElementById('expPerRun').value) || 1;
+        const timePerRun = parseFloat(document.getElementById('timePerRun').value) || 0;
+        
+        const growthRate = 1.076; // 7.6% increase
+        let totalExpNeeded = 0;
+        let currentRequirement = startLevelExp;
+
+        // Validation
+        if (targetLevel <= startLevel) {
+            document.getElementById('expTotalRuns').innerText = "0";
+            document.getElementById('expTotalTime').innerText = "0h 0m";
+            document.getElementById('totalExpRequired').innerText = "0";
+            return;
+        }
+
+        // Loop: Sum EXP for every level from Start to Target
+        for (let lvl = startLevel; lvl < targetLevel; lvl++) {
+            totalExpNeeded += currentRequirement;
+            // Calculate next level requirement based on growth rate
+            currentRequirement = Math.floor(currentRequirement * growthRate);
+        }
+
+        const totalRuns = Math.ceil(totalExpNeeded / expPerRun);
+        const totalMinutes = totalRuns * timePerRun;
+
+        // Convert minutes to H/M
+        const hours = Math.floor(totalMinutes / 60);
+        const mins = Math.ceil(totalMinutes % 60);
+
+        // Update UI
+        document.getElementById('expTotalRuns').innerText = totalRuns.toLocaleString();
+        document.getElementById('expTotalTime').innerText = `${hours}h ${mins}m`;
+        document.getElementById('totalExpRequired').innerText = totalExpNeeded.toLocaleString();
+    }
+
+    function resetPlayerExp() {
+        document.getElementById('targetLevel').value = '';
+        document.getElementById('expPerRun').value = '';
+        document.getElementById('timePerRun').value = '';
+        // Reset to defaults
+        document.getElementById('currentLevel').value = '108';
+        document.getElementById('currentLevelExp').value = '229450';
+        calculatePlayerExp();
+    }
+
     // --- Tab Switching ---
     function openTab(tabName) {
-        // Hide all contents
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-        // Deactivate all buttons
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        
-        // Show target
         document.getElementById(tabName).classList.add('active-tab');
         event.currentTarget.classList.add('active');
     }
