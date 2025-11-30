@@ -427,8 +427,11 @@
                     <input type="number" id="expPerRun" placeholder="e.g. 5000" oninput="calculatePlayerExp()">
                 </div>
                 <div class="input-group">
-                    <label>Time Per Run (Minutes)</label>
-                    <input type="number" id="timePerRun" placeholder="e.g. 5" oninput="calculatePlayerExp()">
+                    <label>Time Per Run (Min / Sec)</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="timePerRunMin" placeholder="Min" oninput="calculatePlayerExp()" style="flex:1; min-width:0;">
+                        <input type="number" id="timePerRunSec" placeholder="Sec" oninput="calculatePlayerExp()" style="flex:1; min-width:0;">
+                    </div>
                 </div>
             </div>
             
@@ -655,7 +658,11 @@
         const startLevelExp = parseInt(document.getElementById('currentLevelExp').value) || 0;
         const targetLevel = parseInt(document.getElementById('targetLevel').value) || 0;
         const expPerRun = parseInt(document.getElementById('expPerRun').value) || 1;
-        const timePerRun = parseFloat(document.getElementById('timePerRun').value) || 0;
+        
+        // New Time Logic
+        const timeMin = parseInt(document.getElementById('timePerRunMin').value) || 0;
+        const timeSec = parseInt(document.getElementById('timePerRunSec').value) || 0;
+        const timePerRun = timeMin + (timeSec / 60);
         
         const growthRate = 1.076; // 7.6% increase
         let totalExpNeeded = 0;
@@ -692,7 +699,8 @@
     function resetPlayerExp() {
         document.getElementById('targetLevel').value = '';
         document.getElementById('expPerRun').value = '';
-        document.getElementById('timePerRun').value = '';
+        document.getElementById('timePerRunMin').value = '';
+        document.getElementById('timePerRunSec').value = '';
         // Reset to defaults
         document.getElementById('currentLevel').value = '108';
         document.getElementById('currentLevelExp').value = '229450';
