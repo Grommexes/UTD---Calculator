@@ -324,6 +324,97 @@
         box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
     }
 
+    /* BLESSING TAB STYLES */
+    .blessing-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255,215,0,0.1);
+        border-radius: var(--radius);
+        background: rgba(0,0,0,0.2);
+    }
+
+    .bless-btn {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        padding: 20px 60px;
+        background: transparent;
+        border: 2px solid #ffd700; /* Gold */
+        color: #ffd700;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: 0.4s;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        z-index: 5;
+        position: relative;
+        letter-spacing: 3px;
+    }
+
+    .bless-btn:hover {
+        background: #ffd700;
+        color: #000;
+        box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+        transform: scale(1.05);
+    }
+
+    .bless-message {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 3.5rem;
+        color: #ffd700; 
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        margin-top: 30px;
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 5;
+        text-align: center;
+        font-weight: 800;
+        position: absolute;
+    }
+
+    .bless-message.show {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .bless-effect {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, rgba(255,215,0,0.1) 50%, transparent 70%);
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        transition: width 1s ease-out, height 1s ease-out, opacity 1s ease-out;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .bless-effect.active {
+        width: 250%;
+        height: 250%;
+        opacity: 0;
+    }
+    
+    .return-btn {
+        margin-top: 120px;
+        font-size: 0.9rem;
+        color: #888;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        opacity: 0;
+        transition: opacity 1s;
+        z-index: 5;
+    }
+
     /* Chrome/Edge number input spinner hide */
     input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
@@ -346,6 +437,7 @@
         <button class="nav-btn active" onclick="openTab('exchange')">Exchange Protocol</button>
         <button class="nav-btn" onclick="openTab('dungeon')">Dungeon Archives</button>
         <button class="nav-btn" onclick="openTab('playerExp')">EXP Data</button>
+        <button class="nav-btn" onclick="openTab('blessing')" style="color: #ffd700;">Blessing</button>
     </div>
 
     <!-- TAB 1: EXCHANGE -->
@@ -442,6 +534,16 @@
         </div>
         
         <button type="button" class="reset-btn" onclick="resetPlayerExp()">Reset Calculator</button>
+    </div>
+
+    <!-- TAB 4: BLESSING -->
+    <div id="blessing" class="tab-content">
+        <div class="blessing-container">
+            <div id="blessEffect" class="bless-effect"></div>
+            <button id="blessBtn" class="bless-btn" onclick="triggerBlessing()">RECEIVE BLESSING</button>
+            <h2 id="blessMessage" class="bless-message"></h2>
+            <button id="resetBlessBtn" class="return-btn" onclick="resetBlessing()">Pray Again</button>
+        </div>
     </div>
 </div>
 
@@ -705,6 +807,56 @@
         document.getElementById('currentLevel').value = '108';
         document.getElementById('currentLevelExp').value = '229450';
         calculatePlayerExp();
+    }
+
+    // --- Blessing Logic ---
+    function triggerBlessing() {
+        const btn = document.getElementById('blessBtn');
+        const msg = document.getElementById('blessMessage');
+        const effect = document.getElementById('blessEffect');
+        const resetBtn = document.getElementById('resetBlessBtn');
+
+        // Trigger visual expansion
+        effect.classList.remove('active');
+        void effect.offsetWidth; // Trigger reflow
+        effect.classList.add('active');
+
+        // Button animation (Hide Button)
+        btn.style.transform = "scale(0.9)";
+        setTimeout(() => {
+            btn.style.transform = "scale(0)";
+            btn.style.opacity = "0";
+            setTimeout(() => btn.style.display = 'none', 300);
+        }, 200);
+
+        // Show message
+        setTimeout(() => {
+            msg.innerText = "YOU HAVE BEEN BLESSED";
+            msg.classList.add('show');
+        }, 600);
+        
+        // Show Reset
+        setTimeout(() => {
+             resetBtn.style.opacity = "1";
+        }, 1500);
+    }
+
+    function resetBlessing() {
+        const btn = document.getElementById('blessBtn');
+        const msg = document.getElementById('blessMessage');
+        const resetBtn = document.getElementById('resetBlessBtn');
+        
+        msg.classList.remove('show');
+        resetBtn.style.opacity = "0";
+        
+        setTimeout(() => {
+            msg.innerText = "";
+            btn.style.display = 'block';
+            setTimeout(() => {
+                btn.style.opacity = "1";
+                btn.style.transform = "scale(1)";
+            }, 50);
+        }, 500);
     }
 
     // --- Tab Switching ---
